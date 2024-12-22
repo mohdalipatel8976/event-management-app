@@ -1,11 +1,27 @@
-import {Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import WelcomeContent from "../common/welcome-content";
-import { Button, Form, Input } from "antd"
+import { Button, Form, Input, message } from "antd"
+import { useState } from "react";
+import { loginUser } from "../../../api-services/users-services";
+import Cookies from "js-cookie";
 
 function LoginPage() {
 
-    const onFinish = (values: any) => {
-        console.log("Received values:", values);
+    const [loading, setLoading] = useState(false)
+    const navigate = useNavigate();
+    const onFinish = async (values: never) => {
+        try {
+            setLoading(true)
+            const response = await loginUser(values);
+            message.success(response.message)
+            Cookies.set("token", response.token);
+            navigate("/");
+
+        } catch (error: any) {
+            message.error(error.response?.data.message || error.message);
+        } finally{
+            setLoading(false)
+        }
     };
 
     return (
@@ -17,18 +33,18 @@ function LoginPage() {
                 <Form className="flex flex-col gap-5 w-96" layout="vertical" onFinish={onFinish}>
                     <h1 className="text-2xl font-bold text-gray-600">
                         Login Your account</h1>
-                    <Form.Item name="email" required label="Email" rules={[{required:true}]}>
+                    <Form.Item name="email" required label="Email" rules={[{ required: true }]}>
                         <Input placeholder="Email" />
                     </Form.Item>
-                    <Form.Item name="password" required label="Password" rules={[{required:true}]}>
+                    <Form.Item name="password" required label="Password" rules={[{ required: true }]}>
                         <Input placeholder="Password" />
                     </Form.Item>
-                    <Button type="primary" htmlType="submit" block>
+                    <Button type="primary" htmlType="submit" block loading={loading}>
                         Login
                     </Button>
 
                     <Link to="/register">
-                    Don't have an account? Register</Link>
+                        Don't have an account? Register</Link>
                 </Form>
             </div>
         </div>

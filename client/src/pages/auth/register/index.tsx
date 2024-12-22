@@ -1,10 +1,16 @@
 import { Link } from "react-router-dom";
 import WelcomeContent from "../common/welcome-content"
-import { Button, Form, Input } from "antd"
+import { Button, Form, Input, message } from "antd"
+import { registerUser } from "../../../api-services/users-services";
 
 function RegisterPage() {
-    const onFinish = (values: any) => {
-        console.log("Received values:", values);
+    const onFinish = async (values: never) => {
+        try {
+            const response = await registerUser(values);
+            message.success(response.message)
+        } catch (error: any) {
+            message.error(error.message)
+        }
     };
 
     return (

@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const express = require("express");
 const router = express.Router();
 
-router.post("register", async(req, res) => {
+router.post("/register", async(req, res) => {
     try{
         const userExists = await User.findOne({email:req.body.email});
         if (userExists){

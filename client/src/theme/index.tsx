@@ -6,7 +6,7 @@ function Themeprovider({ children }: {
     return <ConfigProvider theme={{
         token: {
             colorPrimary : '#222831',
-            borderRadius : 2
+            borderRadius : 6
         },
         components : {
             Button:{

@@ -9,3 +9,8 @@ export const loginUser = async (data: never) => {
     const response = await axios.post("/api/users/login", data)
     return response.data;
 };
+
+export const getCurrentUser = async () => {
+    const response = await axios.get("/api/users/current-user");
+    return response.data;
+}

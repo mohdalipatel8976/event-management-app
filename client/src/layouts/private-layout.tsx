@@ -10,7 +10,7 @@ function PrivateLayout({ children }: { children: React.ReactNode }) {
 
         const token = Cookies.get("token");
         if (!token){
-            navigate(/login);
+            navigate("/login");
         } else {
             setShowContent(true)
         }

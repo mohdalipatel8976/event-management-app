@@ -70,10 +70,9 @@ router.post("/login", async (req, res) => {
   }
 });
 
-//get current user
 router.get("/current-user", validateToken, async (req, res) => {
   try {
-    const user = await User.findbyId(req.user._id).select("-password");
+    const user = await User.findById(req.user._id).select("-password");
     return res
       .status(200)
       .json({ data: user, message: "User fetched successfully" });

@@ -3,7 +3,7 @@ import Themeprovider from "./theme";
 import LoginPage from "./pages/auth/login";
 import RegisterPage from "./pages/auth/register";
 import HomePage from "./pages/private/home";
-import ProfilePage from "./pages/private/home/profile";
+import ProfilePage from "./pages/private/profile";
 import PublicLayout from "./layouts/public-layout";
 import PrivateLayout from "./layouts/private-layout";
 

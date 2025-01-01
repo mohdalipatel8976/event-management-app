@@ -1,7 +1,8 @@
 export interface UserType {
-    id: number;
+    _id: string;
     name: string;
     email: string;
-    role?: string;
+    isAdmin: boolean;
+    createdAt: string
   }
   

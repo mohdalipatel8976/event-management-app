@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { message } from "antd";
 import usersGlobalStore, { UsersStoreType } from "../../store/users-store";
+
 function MenuItems() {
     const iconSize = 16;
     const location = useLocation();
@@ -12,21 +13,21 @@ function MenuItems() {
 
     // Define the menus
     const userMenu = [
-        { name: "Home", path: "/", icon: <Home size={iconSize} />, isActive: currentPath === "/", },
-        { name: "Profile", path: "/profile", icon: <User size={iconSize} />, isActive: currentPath === "/profile", },
-        { name: "Bookings", path: "/bookings", icon: <List size={iconSize} />, isActive: currentPath === "/bookings" },
-        { name: "Reports", path: "/reports", icon: <BarChart size={iconSize} />, isActive: currentPath === "/reports" },
+        { name: "Home", path: "/", icon: <Home size={iconSize} /> },
+        { name: "Profile", path: "/profile", icon: <User size={iconSize} /> },
+        { name: "Bookings", path: "/bookings", icon: <List size={iconSize} /> },
+        { name: "Reports", path: "/reports", icon: <BarChart size={iconSize} /> },
     ];
 
     const adminMenu = [
-        { name: "Home", path: "/", icon: <Home size={iconSize} />, isActive: currentPath.includes("/") },
-        { name: "Events", path: "/admin/events", icon: <Home size={iconSize} />, isActive: currentPath.includes("/admin/events"), },
-        { name: "Bookings", path: "/admin/bookings", icon: <List size={iconSize} />, isActive: currentPath.includes("/admin/bookings"), },
-        { name: "Reports", path: "/admin/reports", icon: <BarChart size={iconSize} />, isActive: currentPath.includes("/admin/reports"), },
-        { name: "Users", path: "/admin/users", icon: <UsersRound size={iconSize} />, isActive: currentPath.includes("/admin/users"), }
+        { name: "Home", path: "/", icon: <Home size={iconSize} /> },
+        { name: "Events", path: "/admin/events", icon: <Home size={iconSize} /> },
+        { name: "Bookings", path: "/admin/bookings", icon: <List size={iconSize} /> },
+        { name: "Reports", path: "/admin/reports", icon: <BarChart size={iconSize} /> },
+        { name: "Users", path: "/admin/users", icon: <UsersRound size={iconSize} /> },
     ];
 
-    // Render menu based on user role (check if role is 'admin')
+    // Determine which menu to render
     const menuToRender = currentUser?.isAdmin ? adminMenu : userMenu;
 
     // Logout handler
@@ -48,10 +49,11 @@ function MenuItems() {
 
             {/* Menu Items */}
             <div className="flex flex-col gap-4 mt-10">
-                {menuToRender?.map((item: any) => (
+                {menuToRender.map((item) => (
                     <div
-                        className={`cursor-pointer px-5 py-3 rounded flex items-center text-sm ${item.isActive ? 'bg-info text-white' : ''}`}
-
+                        className={`cursor-pointer px-5 py-3 rounded flex items-center text-sm ${
+                            currentPath === item.path ? "bg-info text-white" : ""
+                        }`}
                         key={item.name}
                         onClick={() => navigate(item.path)}
                     >

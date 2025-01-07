@@ -28,6 +28,11 @@ a:hover{
   color: #101624 !important;
 }
 
+table {
+  margin-top: 20px;
+  border: 1px solid #c2bfbf;
+}
+
 .center {
   display: block;
   margin-left: auto;
@@ -35,3 +40,5 @@ a:hover{
   width: 80%;
   background-blend-mode: normal;
 }
+
+

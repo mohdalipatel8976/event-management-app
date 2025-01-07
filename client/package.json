@@ -10,8 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.47.10",
     "antd": "^5.22.5",
     "axios": "^1.7.9",
+    "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",
     "firebase": "^11.1.0",
     "js-cookie": "^3.0.5",

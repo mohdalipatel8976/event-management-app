@@ -5,7 +5,9 @@ function Tickets({
     currentStep,
     setCurrentStep,
     eventData,
-    setEventData
+    setEventData,
+    loading,
+    onFinish
 }: EventFormStepProps) {
     const onAddTicketType = () => {
         const newTicketTypes = eventData.ticketTypes || [];
@@ -46,7 +48,7 @@ function Tickets({
                     </div>
                     <div className="flex flex-col gap-3">
                     {eventData.ticketTypes.map((ticketType: any, index: number) => (
-                        <div className="grid grid-cols-4 gap-5">
+                        <div key={index} className="grid grid-cols-4 gap-5">
                             <Input placeholder="Name"
                                 value={ticketType.name}
                                 onChange={(e: any) => onTicketTypePropertyValueChange({
@@ -77,9 +79,10 @@ function Tickets({
                         </div>
                     ))}
 
+
                         <div className="flex justify-between mt-5">
-                            <Button onClick={() => setCurrentStep(currentStep - 1)}>Back</Button>
-                            <Button type="primary" onClick={() => {}}>
+                            <Button disabled={loading} onClick={() => setCurrentStep(currentStep - 1)}>Back</Button>
+                            <Button type="primary" onClick={onFinish} disabled={loading} loading={loading}>
                               Save and Finish
                             </Button>
                         </div>

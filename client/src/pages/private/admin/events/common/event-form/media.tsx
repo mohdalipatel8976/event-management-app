@@ -7,8 +7,10 @@ function Media({
   setCurrentStep,
   selectedMediaFiles,
   setSelectedMediaFiles,
+  eventData,
+  setEventData,
 }: EventFormStepProps) {
-  // Function to remove a selected media file
+  // Remove a selected file
   const onSelectedMediaRemove = (index: number) => {
     const updatedMediaFiles = selectedMediaFiles.filter((_: any, i: number) => i !== index);
     const fileToRemove = selectedMediaFiles[index];
@@ -18,7 +20,13 @@ function Media({
     setSelectedMediaFiles(updatedMediaFiles);
   };
 
-  // Cleanup object URLs on component unmount
+  // Remove already uploaded media
+  const onAlreadyUploadedMediaRemove = (index: number) => {
+    const updatedMedia = eventData.media.filter((_: any, i: number) => i !== index);
+    setEventData({ ...eventData, media: updatedMedia });
+  };
+
+  // Cleanup URLs on unmount
   useEffect(() => {
     return () => {
       selectedMediaFiles.forEach((file: any) => {
@@ -31,8 +39,8 @@ function Media({
 
   // Handle file upload
   const handleBeforeUpload = (file: any) => {
-    file.preview = URL.createObjectURL(file); // Generate preview URL
-    setSelectedMediaFiles((prev: any) => [...prev, file]); // Add file to the selected list
+    file.preview = URL.createObjectURL(file);
+    setSelectedMediaFiles((prev: any) => [...prev, file]);
     return false; // Prevent automatic upload
   };
 
@@ -48,21 +56,43 @@ function Media({
         <span className="text-gray-500 text-xs">Click here to upload media</span>
       </Upload>
 
-      {/* Display Uploaded Media */}
+      {/* Display Selected Files */}
       <div className="flex flex-wrap gap-5 mt-4">
         {selectedMediaFiles.map((file: any, index: number) => (
           <div
             className="border p-3 border-solid border-gray-200 flex flex-col items-center"
-            key={file.name}
+            key={file.name + index}
           >
             <img
-              src={file.preview || URL.createObjectURL(file)}
+              src={file.preview}
               alt="media"
               className="w-40 h-40 object-cover"
             />
             <button
               className="mt-2 text-red-500 underline text-sm"
               onClick={() => onSelectedMediaRemove(index)}
+            >
+              Remove
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {/* Display Already Uploaded Media */}
+      <div className="flex flex-wrap gap-5 mt-4">
+        {eventData?.media?.map((url: string, index: number) => (
+          <div
+            className="border p-3 border-solid border-gray-200 flex flex-col items-center"
+            key={url + index}
+          >
+            <img
+              src={url}
+              alt="media"
+              className="w-40 h-40 object-cover"
+            />
+            <button
+              className="mt-2 text-red-500 underline text-sm"
+              onClick={() => onAlreadyUploadedMediaRemove(index)}
             >
               Remove
             </button>

@@ -43,6 +43,7 @@ function LocationAndDate({
                     placeholder="Date"
                     value={eventData.date}
                     type="date"
+                    min={new Date().toISOString().split('T')[0]}
                     onChange={(e) => setEventData({ ...eventData, date: e.target.value })}
                 />
             </Form.Item>

@@ -7,7 +7,7 @@ const EventModel = require("../models/event-model");
 router.post('/create-event', validateToken, async (req, res) => {
 
     try {
-        const event = new EventModel(req.body);
+        const event = await EventModel.create(req.body);
         return res
             .status(201)
             .json({ message: "Event created successfully", event });
@@ -36,15 +36,15 @@ router.delete("/delete-event/:id", validateToken, async (req, res) => {
     }
 })
 
-router.get("/get-events", validateToken, async (req, res) => {
+
+router.get("/get-events", async (req, res) => {
     try {
-        const events = await EventModel.find();
-        return res.json({data:events})
+        const events = await EventModel.find().sort({ createdAt: -1 });
+        return res.json({ data: events });
     } catch (error) {
-        return res.status(500).json({message: error.message});
-        
+        return res.status(500).json({ message: error.message });
     }
-})
+});
 
 router.get("/get-events/:id", validateToken, async (req, res) => {
     try {

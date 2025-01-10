@@ -10,9 +10,9 @@ export const createEvent = async (data: any) => {
   }
 };
 
-export const getEvents = async () => {
+export const getEvents = async (filters: any) => {
   try {
-    const response:any = await axios.get('/api/events/get-events');
+    const response:any = await axios.get(`/api/events/get-events?searchText=${filters.searchText}&date=${filters.date}`);
     return response.data;
   } catch (error) {
     console.error("Error getting events:", error);

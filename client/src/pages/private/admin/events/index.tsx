@@ -14,7 +14,10 @@ function EventsPage(){
     const getData = async () => {
         try {
             setLoading(true)
-            const response = await getEvents()
+            const response = await getEvents({
+                searchText: "",
+                date : "",
+        })
             setEvents(response.data)
         } catch (error) {
             message.error("Failed to fetch events")

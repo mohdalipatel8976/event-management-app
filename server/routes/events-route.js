@@ -39,7 +39,14 @@ router.delete("/delete-event/:id", validateToken, async (req, res) => {
 
 router.get("/get-events", async (req, res) => {
     try {
-        const events = await EventModel.find().sort({ createdAt: -1 });
+        //access search query
+        const searchText = req.query.searchText;
+        const date = req.query.date;
+
+        const events = await EventModel.find({
+            name: { $regex: new RegExp(searchText, "i") },
+            ...(date && { date })
+        }).sort({ createdAt: -1 });
         return res.json({ data: events });
     } catch (error) {
         return res.status(500).json({ message: error.message });

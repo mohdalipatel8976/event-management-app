@@ -5,6 +5,7 @@ import { getEvents } from "../../../api-services/events-service";
 import EventCard from "./common/event-card";
 import { EventType } from "../../../interfaces";
 import Filters from "./common/filters";
+import Spinner from "../../../components/spinner";
 
 
 
@@ -34,12 +35,19 @@ function HomePage() {
   useEffect(() => {
     // Fetch initial data
     getData(filters);
-  }, []); // Empty dependency array ensures this runs only once
+  }, []); 
 
   useEffect(() => {
-    // Refetch data whenever filters change
     getData(filters);
   }, [filters]);
+
+  if(loading) {
+    return (
+    <div className="flex h-screen justify-center items-center"> 
+        <Spinner />
+    </div>
+    )
+}
   
   return (
     <div className="p-5">

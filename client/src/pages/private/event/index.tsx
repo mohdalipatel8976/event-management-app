@@ -1,0 +1,99 @@
+import { useEffect, useState } from "react";
+import { EventType } from "../../../interfaces";
+import { message } from "antd";
+import { getEventById } from "../../../api-services/events-service";
+import { useParams } from "react-router-dom";
+import Spinner from "../../../components/spinner";
+import { MapPin, Timer } from "lucide-react";
+import { getDateFormat, getDateTimeFormat } from "../../../helpers/date-time-formats";
+import TicketsSelection from "./common/tickets-selection";
+
+function EventInfoPage() {
+
+    const [eventData, setEventData] = useState<EventType | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+    const params: any = useParams();
+
+    const getData = async () => {
+        try {
+            setLoading(true);
+            const response = await getEventById(params.id);
+            setEventData(response.data);
+        } catch (error) {
+            message.error("  to fetch event data");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const renderEventProperty = (label: string, value: any) => {
+        return (
+            <div className="flex flex-col text-sm">
+                <span className="text-gray-500">{label}</span>
+                <span className="text-gray-800 font-semibold">{value}</span>
+            </div>
+        )
+    }
+
+    useEffect(() => {
+        getData();
+    },[]);
+
+    if(loading) {
+        return (
+        <div className="flex h-screen justify-center items-center"> 
+            <Spinner />
+        </div>
+        )
+    }
+
+    return (
+    eventData && <div>
+        <div className="flex flex-col gap-">
+            <h1 className="text-xl font-bold text-gray-600">{eventData?.name}</h1>
+            <div className="flex gap-10">
+                <div className="flex gap-1 text-gray-500 items-center">
+                    <MapPin size={12} />
+                    <span className="text-xs text-gray-500">
+                        {eventData?.address}, {eventData?.city} {eventData?.pincode}
+                    </span>
+                </div>
+                <div className="flex gap-1 text-gray-500 items-center">
+                    <Timer size={12 } />
+                    <span className="text-xs text-gray-500">
+                        {getDateTimeFormat(`${eventData?.date} ${eventData?.time}`)}
+                    </span>
+                </div>
+            </div>
+        
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-3 mt-7">
+            {eventData?.media.map((media, index) => (
+                <img key={index} src={media} alt={eventData?.name} className="w-full h-56 object-cover rounded-1" />
+            ))}
+        </div>
+
+        <div className="mt-7">
+            <p className="text-gray-600 text-sm">{eventData?.description}</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-3 bg-gray-100 mt-7">
+            {renderEventProperty("Event Organizer", eventData?.organizer)}
+            {renderEventProperty("Event Address", eventData?.address)}
+            {renderEventProperty("Event City", eventData?.city)}
+            {renderEventProperty("Pincode", eventData?.pincode)}
+            {renderEventProperty("Event Date", getDateFormat(eventData.date))}
+            {renderEventProperty("Event Time", eventData.time)}
+            <div className="col-span-3">
+                {renderEventProperty("Event Guests", eventData.guests.join(", "))}
+            </div>
+        </div>
+    
+        <div className="mt-7">
+            <TicketsSelection eventData={eventData} />
+        </div>
+    </div>
+)};
+
+export default EventInfoPage;

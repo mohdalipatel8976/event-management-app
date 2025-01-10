@@ -2,10 +2,12 @@ import { Button } from "antd";
 import { MapPin, Timer } from "lucide-react";
 import { EventType } from "../../../../interfaces";
 import { getDateTimeFormat } from "../../../../helpers/date-time-formats";
+import { useNavigate } from "react-router-dom";
 
 function EventCard({ event }: { event: EventType }) {
 
     const mainImage = event.media[0];
+    const navigate = useNavigate();
     return (
 
         <div className="grid lg:grid-cols-3 grid-cols-1 border border-solid border-gray-200 items-center gap-5">
@@ -26,7 +28,9 @@ function EventCard({ event }: { event: EventType }) {
                             <p className="text-xs">{getDateTimeFormat(`${event.date} ${event.time}`)}</p>
                         </div>
                     </div>
-                    <Button type="primary">View Details</Button>
+                    <Button type="primary"
+                        onClick={() => navigate(`/event/${event._id}`)}
+                    >View Details</Button>
                 </div>
             </div>
         </div>

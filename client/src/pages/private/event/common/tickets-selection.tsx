@@ -1,47 +1,106 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { EventType } from "../../../../interfaces";
 import { Button, Input } from "antd";
+import CheckoutModal from "./CheckoutModal";
 
 function TicketsSelection({ eventData }: { eventData: EventType }) {
-
   const ticketTypes = eventData.ticketTypes;
-  const [selectedTicketType, setSelectedTicketType] = useState<string>('');
-  const [maxCount, setMaxCount] = useState<number>(1);
-  const selectedTicketPrice = ticketTypes.find((ticketType) => ticketType.name === selectedTicketType)?.price;
-  const [selectedTicketCount, setSelectedTicketCount] = useState<number>(1);
 
-  const totalAmount = (selectedTicketPrice || 0) * selectedTicketCount;
+  const [selectedTicketType, setSelectedTicketType] = useState<string>("");
+  const [maxCount, setMaxCount] = useState<number>(1);
+  const [selectedTicketCount, setSelectedTicketCount] = useState<number>(1);
+  const [showCheckoutModal, setShowCheckoutModal] = React.useState<boolean>(false);
+
+  const selectedTicket = ticketTypes.find(
+    (ticketType) => ticketType.name === selectedTicketType
+  );
+  const selectedTicketPrice = selectedTicket?.price || 0;
+  const totalAmount = selectedTicketPrice * selectedTicketCount;
+
+  // Handles selecting a ticket type
+  const handleTicketTypeChange = (ticketType: string) => {
+    setSelectedTicketType(ticketType);
+    const selected = ticketTypes.find((t) => t.name === ticketType);
+    setMaxCount(selected?.limit || 1);
+    setSelectedTicketCount(1); // Reset quantity to 1 on new selection
+  };
+
+  // Handles ticket quantity changes with NaN prevention
+  const handleTicketCountChange = (value: string) => {
+    const parsedValue = parseInt(value) || 0; // Default to 0 if input is invalid
+    setSelectedTicketCount(
+      Math.min(Math.max(parsedValue, 1), maxCount) // Ensure it's within valid range
+    );
+  };
+
   return (
-    <div>
-      <div>
-        <h1 className="text-sm text-info font-bold">Select ticket type</h1>
-        <div className="flex flex-wrap gap-5 mt-3">
-          {ticketTypes.map((ticketType, index) => (
-            <div key={index} className={`border border-gray-200 bg-gray-100 p-2 lg:w-96 w-full cursor-pointer ${selectedTicketType === ticketType.name ? "border-primary border-solid border-2" : ""}`} onClick={() => { setSelectedTicketType(ticketType.name); setMaxCount(ticketType.limit) }}>
-              <h1 className="text-sm text-gray-900 uppercase">
-                {ticketType.name}
-                <div className="flex justify-between">
-                  <h1 className="text-sm font-bold">
-                    ${ticketType.price}
-                  </h1>
-                  <h1 className="text-xs font-bold">
-                    {ticketType.limit} Left
-                  </h1>
-                </div>
-              </h1>
+    <div className="p-6 bg-white rounded-lg shadow-lg max-w-5xl mx-auto">
+      <h1 className="text-xl font-semibold text-red-600">Select Ticket Type</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mt-3">
+        {ticketTypes.map((ticketType, index) => (
+          <div
+            key={index}
+            className={`border p-2 rounded-lg cursor-pointer transition-all duration-300 
+              ${
+                selectedTicketType === ticketType.name
+                  ? "border-red-500 bg-red-100 shadow-lg"
+                  : "border-gray-300 bg-gray-100"
+              }`}
+            onClick={() => handleTicketTypeChange(ticketType.name)}
+          >
+            <h2 className="text-lg font-bold text-gray-800">
+              {ticketType.name}
+            </h2>
+            <div className="flex justify-between mt-1">
+              <p className="text-base font-bold text-gray-700">
+                ₹{ticketType.price}
+              </p>
+              <p className="text-sm font-bold text-gray-500">
+                {ticketType.limit} Left
+              </p>
             </div>
-          ))}
-        </div>
-        <h1 className="text-sm text-info font-bold mt-10">Select ticket type</h1>
-        <Input type="number" value={selectedTicketCount} onChange={(e) => setSelectedTicketCount(parseInt(e.target.value))} max={maxCount} min={1} />
-        <div className="mt-7 flex justify-between bg-gray-200 border border-solid p-3">
-          <h1 className="text-xl text-gray-500 font-bold">
-            Total Amount :$ {totalAmount}
-          </h1>
-          <Button type="primary">Book Now</Button>
-        </div>
+          </div>
+        ))}
       </div>
+
+      <h1 className="text-lg font-semibold text-red-600 mt-8">
+        Select Ticket Quantity
+      </h1>
+      <div className="mt-3">
+        <Input
+          type="number"
+          value={selectedTicketCount}
+          onChange={(e) => handleTicketCountChange(e.target.value)}
+          max={maxCount}
+          min={1}
+          className="w-full md:w-1/2 border border-gray-300 rounded-lg"
+        />
+      </div>
+
+      <div className="mt-8 flex flex-col md:flex-row justify-between items-center bg-gray-100 border border-gray-300 p-5 rounded-lg">
+        <h2 className="text-xl font-bold text-gray-700">
+          Total Amount:{" "}
+          <span className="text-red-600">₹{totalAmount.toFixed(2)}</span>
+        </h2>
+        <Button
+          type="primary"
+          className="bg-red-600 hover:bg-red-700 text-white border-none mt-4 md:mt-0"
+          disabled={!selectedTicketType}
+          onClick={() => setShowCheckoutModal(true)}
+        >
+          Book Now
+        </Button>
+      </div>
+      {showCheckoutModal && (
+        <CheckoutModal 
+          setShowCheckoutModal={setShowCheckoutModal}
+          showCheckoutModal={showCheckoutModal}
+          totalAmount={totalAmount} userId={""} eventId={""} tickets={[]} />
+          
+        )
+      }
     </div>
   );
 }
+
 export default TicketsSelection;

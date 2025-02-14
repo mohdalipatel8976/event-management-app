@@ -1,5 +1,9 @@
+import PageTitle from "../../../components/page-title";
+
 function ProfilePage() {
-  return <div>ProfilePage</div>;
+  return <div>
+    <PageTitle title="Profile"/>
+  </div>;
 }
 
 export default ProfilePage;

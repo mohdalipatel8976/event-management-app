@@ -10,6 +10,7 @@ import EventsPage from "./pages/private/admin/events";
 import CreateEventPage from "./pages/private/admin/events/create";
 import EditEventPage from "./pages/private/admin/events/edit";
 import EventInfoPage from "./pages/private/event";
+import UserBooking from "./pages/private/profile/bookings";
 
 function App() {
   return (
@@ -48,6 +49,16 @@ function App() {
               </PrivateLayout>
             }
           />
+
+            <Route
+              path="/profile/bookings"
+              element={
+                <PrivateLayout>
+                  <UserBooking />
+                </PrivateLayout>
+              }
+            />
+          
 
           <Route
             path="/event/:id"

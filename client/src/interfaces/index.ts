@@ -21,6 +21,7 @@ export interface EventType {
   media: string[];
   time: string;
   ticketTypes: {
+    [x: string]: number;
     name: string;
     price: number;
     limit: number;
@@ -28,3 +29,16 @@ export interface EventType {
 
 
 }
+
+export interface BookingType {
+  _id: string;
+  user: UserType;
+  event: EventType;
+  ticketType: string;
+  quantity: number;
+  totalAmount: number;
+  paymentId ?: string;
+  status ?: string;
+  createdAt: string;
+}
+ 

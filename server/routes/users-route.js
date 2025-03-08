@@ -81,4 +81,24 @@ router.get("/current-user", validateToken, async (req, res) => {
   }
 });
 
+ router.get("/get-all-users", validateToken, async (req, res) => {
+  try {
+    const users = await User.find().select("-password").sort({ createdAt: -1 });
+    return res
+      .status(200)
+      .json({ data: users, message: "Users fetched successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  } 
+});
+
+router.put("/update-user", validateToken, async (req, res) => {
+  try {
+    await User.findByIdAndUpdate(req.body.userId, req.body)
+    return res.status(200).json({ message: "User updated successfully"
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+});
 module.exports = router;

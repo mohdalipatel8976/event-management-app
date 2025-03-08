@@ -72,7 +72,7 @@ function CheckoutForm({
         };
         await createBooking(bookingPayload);
         message.success("Booking Successful");
-        navigate("/profile");
+        navigate("/profile/bookings");
       } else {
         throw new Error("Failed to place order!");
       }

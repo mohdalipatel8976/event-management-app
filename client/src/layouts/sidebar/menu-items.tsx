@@ -15,8 +15,8 @@ function MenuItems() {
     const userMenu = [
         { name: "Home", path: "/", icon: <Home size={iconSize} /> },
         { name: "Profile", path: "/profile", icon: <User size={iconSize} /> },
-        { name: "Bookings", path: "/bookings", icon: <List size={iconSize} /> },
-        { name: "Reports", path: "/reports", icon: <BarChart size={iconSize} /> },
+        { name: "Bookings", path: "/profile/bookings", icon: <List size={iconSize} /> },
+        { name: "Reports", path: "/profile/reports", icon: <BarChart size={iconSize} /> },
     ];
 
     const adminMenu = [

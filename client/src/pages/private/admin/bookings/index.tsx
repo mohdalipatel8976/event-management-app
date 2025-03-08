@@ -1,17 +1,17 @@
 import { message, Table } from "antd";
 import PageTitle from "../../../../components/page-title";
 import { useEffect, useState } from 'react';
-import { getUserBookings } from "../../../../api-services/booking-service";
+import { getAllBookings, getUserBookings } from "../../../../api-services/booking-service";
 import { BookingType } from "../../../../interfaces";
 import { getDateFormat } from "../../../../helpers/date-time-formats";
 
-function UserBookingsPage() {
+function AdminBookingsPage() {
     const [bookings, setbookings] = useState<BookingType[]>([]);
     const [loading, setloading] = useState(false);
     const getData = async () => {
         try {
             setloading(true)
-            const response = await getUserBookings();
+            const response = await getAllBookings();
             setbookings(response.data)
             setloading(false)
         } catch (error: any) {
@@ -31,6 +31,12 @@ function UserBookingsPage() {
             dataIndex : "event",
             key : "event",
             render : (event: any) => event.name
+        },
+        {
+            title : "User Name",
+            dataIndex : "user",
+            key : "user",
+            render : (user: any) => user.name
         },
         {
             title : "Event Date & time",
@@ -54,15 +60,15 @@ function UserBookingsPage() {
             key : "ticketAmount",
         },
         {
-            title : "Status",
-            dataIndex : "status",
-            key : "status",
-        },
-        {
             title : "Booking Date",
             dataIndex : "createdAt",
             key : "createdAt",
             render : (createdAt: string) => getDateFormat(createdAt)
+        },
+        {
+            title : "Status",
+            dataIndex : "status",
+            key : "status",
         },
         
     ]
@@ -79,4 +85,4 @@ function UserBookingsPage() {
         </div>
     )
 }
-export default UserBookingsPage;
+export default AdminBookingsPage;

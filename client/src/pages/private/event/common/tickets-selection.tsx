@@ -21,7 +21,8 @@ function TicketsSelection({ eventData }: { eventData: EventType }) {
   const handleTicketTypeChange = (ticketType: string) => {
     setSelectedTicketType(ticketType);
     const selected = ticketTypes.find((t) => t.name === ticketType);
-    setMaxCount(selected?.limit || 1);
+    const available = selected?.available ?? selected?.limit ?? 1;
+    setMaxCount(available);
     setSelectedTicketCount(1); // Reset quantity to 1 on new selection
   };
 
@@ -33,21 +34,21 @@ function TicketsSelection({ eventData }: { eventData: EventType }) {
 
   // Construct the tickets array based on the selected type and count
   const ticketsArray = selectedTicketType
-  ? [{ ticketType: selectedTicketType, quantity: selectedTicketCount, price: selectedTicketPrice }]
-  : [];
+    ? [{ ticketType: selectedTicketType, quantity: selectedTicketCount, price: selectedTicketPrice }]
+    : [];
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg max-w-5xl mx-auto">
       <h1 className="text-xl font-semibold text-red-600">Select Ticket Type</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mt-3">
-        {ticketTypes.map((ticketType, index) => (
-          <div
+        {ticketTypes.map((ticketType, index) => {
+          const available = ticketType.available ?? ticketType.limit;
+          return <div
             key={index}
             className={`border p-2 rounded-lg cursor-pointer transition-all duration-300 
-              ${
-                selectedTicketType === ticketType.name
-                  ? "border-red-500 bg-red-100 shadow-lg"
-                  : "border-gray-300 bg-gray-100"
+              ${selectedTicketType === ticketType.name
+                ? "border-red-500 bg-red-100 shadow-lg"
+                : "border-gray-300 bg-gray-100"
               }`}
             onClick={() => handleTicketTypeChange(ticketType.name)}
           >
@@ -59,11 +60,12 @@ function TicketsSelection({ eventData }: { eventData: EventType }) {
                 ₹{ticketType.price}
               </p>
               <p className="text-sm font-bold text-gray-500">
-                {ticketType.limit} Left
+                {available} Left
               </p>
             </div>
           </div>
-        ))}
+        }
+        )}
       </div>
 
       <h1 className="text-lg font-semibold text-red-600 mt-8">
@@ -80,6 +82,7 @@ function TicketsSelection({ eventData }: { eventData: EventType }) {
         />
       </div>
 
+
       <div className="mt-8 flex flex-col md:flex-row justify-between items-center bg-gray-100 border border-gray-300 p-5 rounded-lg">
         <h2 className="text-xl font-bold text-gray-700">
           Total Amount:{" "}
@@ -88,13 +91,13 @@ function TicketsSelection({ eventData }: { eventData: EventType }) {
         <Button
           type="primary"
           className="bg-red-600 hover:bg-red-700 text-white border-none mt-4 md:mt-0"
-          disabled={!selectedTicketType}
+          disabled={!selectedTicketType || !selectedTicketCount || selectedTicketCount > maxCount} 
           onClick={() => setShowCheckoutModal(true)}
         >
           Book Now
         </Button>
       </div>
-      
+
       {showCheckoutModal && (
         <CheckoutModal
           showCheckoutModal={showCheckoutModal}

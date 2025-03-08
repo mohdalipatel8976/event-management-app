@@ -1,4 +1,3 @@
-import { PaymentElement, AddressElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { Button, message } from "antd";
 import React from "react";
 import axios from "axios";
@@ -11,7 +10,7 @@ function CheckoutForm({
   tickets,
   totalAmount,
   selectedTicketsCount,
-  selectedTicketType
+  selectedTicketType,
 }: {
   userId: string;
   eventId: string;
@@ -21,103 +20,81 @@ function CheckoutForm({
   selectedTicketType: string;
 }) {
   const [loading, setLoading] = React.useState(false);
-  const stripe = useStripe();
-  const elements = useElements();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: any) => {
     try {
       setLoading(true);
       e.preventDefault();
-  
-      if (!stripe || !elements) {
-        throw new Error("Stripe.js has not been loaded!");
-      }
-  
-      // Validate shipping address before confirming the payment
-      const addressElement = elements.getElement("address");
-      if (!addressElement) {
-        throw new Error("Shipping address is required!");
-      }
-  
-      const result = await stripe.confirmPayment({
-        elements,
-        confirmParams: {
-          return_url: "http://localhost:5173/success",
-        },
-        redirect: "if_required",
-      });
-  
-      if (result.error) {
-        if (result.error.type === "invalid_request_error") {
-          message.error("Only domestic payments in INR are supported. Please switch to INR.");
-        }
-        throw result.error;
-      }
-  
-      // Proceed with order creation
+
+      const mappedTickets = tickets.map(ticket => ({
+        // Since the ticket object already uses 'ticketType', we use it directly.
+        ticketType: ticket.ticketType,
+        quantity: ticket.quantity,
+        price: ticket.price,
+      }));
+      
       const orderPayload = {
-        user: userId,
-        event: eventId,
-        tickets: tickets.map((ticket) => ({
-          ticketType: ticket.type,
-          quantity: ticket.quantity,
-          price: ticket.price,
-        })),
+        users: userId || "default_user",     // Note: your backend expects "users"
+        event: eventId || "default_event",     // Your backend expects "event"
+        tickets: mappedTickets,
         totalAmount,
-        paymentStatus: result.paymentIntent?.status || "Pending",
-        paymentIntentId: result.paymentIntent?.id || "",
-        shippingAddress: result.paymentIntent?.shipping || {},
+        paymentStatus: "Paid",
+        paymentIntentId: "bypass_stripe",
+        shippingAddress: {
+          line1: "123 Main St",
+          city: "New York",
+          country: "US",
+          postal_code: "10001",
+        },
       };
-  
-      const response = await axios.post("/api/orders", orderPayload);
-  
+      
+      console.log("Mapped Tickets:", mappedTickets);
+      console.log("Sending Order Payload:", orderPayload);
+      
+
+      console.log("📦 Sending Order Payload:", orderPayload);
+
+      const response = await axios.post("/api/orders", orderPayload, {
+        headers: { "Content-Type": "application/json" },
+      });
+
       if (response.status === 201) {
         message.success("Order placed successfully!");
+
         const bookingPayload = {
-          event : eventId,
-          ticketType : selectedTicketType,
-          ticketsCounts : selectedTicketsCount,
-          totalAmount,
-          paymentId : result.paymentIntent?.id || "",
+          event: eventId,
+          ticketType: selectedTicketType,
+          ticketsCount: selectedTicketsCount, // Add this field
+          ticketAmount: totalAmount, // Add this field
+          paymentID: "bypass_stripe", // Add this field (or use a real payment ID if available)
           status: "booked",
         };
-        await createBooking(bookingPayload)
-        message.success("Booking Successful") 
+        await createBooking(bookingPayload);
+        message.success("Booking Successful");
         navigate("/profile");
       } else {
         throw new Error("Failed to place order!");
       }
     } catch (error: any) {
-      message.error(error.message || "Something went wrong!");
+      console.error("Error placing order:", error.response?.data || error.message);
+      message.error(error.response?.data?.message || error.message || "Something went wrong!");
     } finally {
       setLoading(false);
     }
   };
-  
-  
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <PaymentElement />
-        <div className="mt-5">
-          <AddressElement
-            options={{
-              allowedCountries: ["US", "IN"],
-              mode: "shipping",
-            }}
-          />
-        </div>
         <Button
           type="primary"
           htmlType="submit"
           className="w-full mt-5 block"
           loading={loading}
-          disabled={!stripe || !elements}
         >
           Pay ₹{totalAmount.toFixed(2)}
         </Button>
-
       </form>
     </div>
   );

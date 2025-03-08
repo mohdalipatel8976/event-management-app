@@ -9,7 +9,7 @@ function TicketsSelection({ eventData }: { eventData: EventType }) {
   const [selectedTicketType, setSelectedTicketType] = useState<string>("");
   const [maxCount, setMaxCount] = useState<number>(1);
   const [selectedTicketCount, setSelectedTicketCount] = useState<number>(1);
-  const [showCheckoutModal, setShowCheckoutModal] = React.useState<boolean>(false);
+  const [showCheckoutModal, setShowCheckoutModal] = useState<boolean>(false);
 
   const selectedTicket = ticketTypes.find(
     (ticketType) => ticketType.name === selectedTicketType
@@ -28,10 +28,13 @@ function TicketsSelection({ eventData }: { eventData: EventType }) {
   // Handles ticket quantity changes with NaN prevention
   const handleTicketCountChange = (value: string) => {
     const parsedValue = parseInt(value) || 0; // Default to 0 if input is invalid
-    setSelectedTicketCount(
-      Math.min(Math.max(parsedValue, 1), maxCount) // Ensure it's within valid range
-    );
+    setSelectedTicketCount(Math.min(Math.max(parsedValue, 1), maxCount));
   };
+
+  // Construct the tickets array based on the selected type and count
+  const ticketsArray = selectedTicketType
+  ? [{ ticketType: selectedTicketType, quantity: selectedTicketCount, price: selectedTicketPrice }]
+  : [];
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg max-w-5xl mx-auto">
@@ -91,14 +94,19 @@ function TicketsSelection({ eventData }: { eventData: EventType }) {
           Book Now
         </Button>
       </div>
+      
       {showCheckoutModal && (
-        <CheckoutModal 
-          setShowCheckoutModal={setShowCheckoutModal}
+        <CheckoutModal
           showCheckoutModal={showCheckoutModal}
-          totalAmount={totalAmount} userId={""} eventId={""} tickets={[]} />
-          
-        )
-      }
+          setShowCheckoutModal={setShowCheckoutModal}
+          totalAmount={totalAmount}  // Ensure this is correctly calculated
+          userId={eventData._id || "fallback_user"}
+          eventId={eventData._id || "fallback_event"}
+          tickets={ticketsArray}
+          selectedTicketsCount={selectedTicketCount}
+          selectedTicketType={selectedTicketType}
+        />
+      )}
     </div>
   );
 }

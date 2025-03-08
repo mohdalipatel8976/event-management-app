@@ -1,33 +1,32 @@
 const express = require("express");
 const router = express.Router();
-const Order = require("../models/orderModel"); // Import the Order model
+const Order = require("../models/orderModel");
 
-// Create a new order
+// ✅ Bypass Stripe and Directly Store Order
 router.post("/", async (req, res) => {
   try {
-    const { userId, eventId, tickets, totalAmount, paymentStatus, shippingAddress } = req.body;
+    console.log("Received Order Payload:", req.body);
 
-    // Validate required fields
-    if (!userId || !eventId || !tickets || !totalAmount || !paymentStatus || !shippingAddress) {
+    const { users, event, tickets, totalAmount, paymentStatus, shippingAddress } = req.body;
+    if (!users || !event || !tickets.length || !totalAmount || !paymentStatus || !shippingAddress) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Create and save the order
+
     const order = new Order({
-      userId,
-      eventId,
+      users,
+      event,
       tickets,
       totalAmount,
-      paymentStatus: "Pending",
+      paymentStatus: "Paid", // ✅ Always set to Paid
       shippingAddress,
-      paymentIntentId: paymentIntent.id, // Add the payment intent ID here
+      paymentIntentId: req.body.paymentIntentId || "bypass_stripe", // ✅ Fake Stripe ID
     });
-    
 
     const savedOrder = await order.save();
     res.status(201).json(savedOrder);
   } catch (error) {
-    console.error(error);
+    console.error("Error saving order:", error);
     res.status(500).json({ message: "Failed to create the order" });
   }
 });

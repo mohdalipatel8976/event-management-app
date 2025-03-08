@@ -1,37 +1,38 @@
 const mongoose = require('mongoose');
+
 const bookingSchema = new mongoose.Schema({
     event: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'events',
-        required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "events",
+      required: true,
     },
     user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'users',
-        required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
     },
     ticketType: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     ticketsCount: {
-        type: Number,
-        required: true
+      type: Number,
+      required: true,
     },
     ticketAmount: {
-        type: Number,
-        required: true
+      type: Number,
+      required: true,
     },
     paymentID: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     status: {
-        type: String,
-        required: true,
-        default: 'booked'
+      type: String,
+      required: true,
+      default: "booked",
     },
-}, { timestamps: true });
+  }, { timestamps: true });
 
 const BookingModel = mongoose.model("bookings", bookingSchema);
 

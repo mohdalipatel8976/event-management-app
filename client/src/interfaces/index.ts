@@ -3,6 +3,7 @@ export interface UserType {
   name: string;
   email: string;
   isAdmin: boolean;
+  isActive: boolean;
   createdAt: string
 }
 
@@ -21,7 +22,6 @@ export interface EventType {
   media: string[];
   time: string;
   ticketTypes: {
-    [x: string]: number;
     name: string;
     price: number;
     limit: number;

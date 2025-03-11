@@ -10,38 +10,18 @@ router.post("/create-booking", validateToken, async (req, res) => {
   
       console.log("Request Body:", req.body);
       const booking = await BookingModel.create(req.body);
-  
       const event = await EventModel.findById(req.body.event);
-      if (!event) {
-        return res.status(404).json({ message: "Event not found" });
-      }
-
-      const ticketTypes = event.ticketTypes
-      const updatedTicketTypes = ticketTypes.map((ticketType) => {
+      const ticketTypes = event.ticketTypes;
+      const updatedTicketTypes = ticketTypes.map(ticketType => {
         if (ticketType.name === req.body.ticketType) {
-              ticketType.booked = Number(ticketType.booked ?? 0) + Number(req.body.ticketsCount);
-              ticketType.available = Number(ticketType.available ?? ticketType.limit) - Number(req.body.ticketsCount);
-            }
-            return ticketType;
+          ticketType.booked = Number(ticketType.booked || 0) + Number(req.body.ticketsCount);
+          ticketType.available = Number(ticketType.available || ticketType.limit) - Number(req.body.ticketsCount);
+        }
+        return ticketType;
       });
- 
-  
-      // // Update event tickets
-      // const updatedTicketTypes = event.ticketTypes.map((ticketType) => {
-      //   if (ticketType.name === req.body.ticketType) {
-      //     ticketType.booked = Number(ticketType.booked || 0) + Number(req.body.ticketsCount);
-      //     ticketType.available = Number(ticketType.available || ticketType.limit) - Number(req.body.ticketsCount);
-      //   }
-      //   return ticketType;
-      // });
-  
-      // event.ticketTypes = updatedTicketTypes;
-      // await event.save();
-  
-      await EventModel.findByIdAndUpdate(req.body.event,{
-        ticketTypes: updatedTicketTypes,
-      } )
-      return res.status(201).json({ message: "Booking created successfully", booking });
+      await EventModel.findByIdAndUpdate
+      (req.body.event, { ticketTypes: updatedTicketTypes });
+      return res.status(200).json({ data: booking });
     } catch (error) {
       console.error("Error creating booking:", error);
       return res.status(500).json({ message: "Error creating booking", error: error.message });

@@ -15,6 +15,9 @@ app.use("/api/events", require("./routes/events-route"));
 app.use("/api/stripe_client_secret", require("./routes/stripe_client_secret")); 
 app.use("/api/orders", require("./routes/orders-route"));
 app.use("/api/bookings", require("./routes/bookings-route"));
+app.use("/api/reports", require("./routes/reports-route"));
+
+
 
 
 const port = process.env.PORT || 5000;

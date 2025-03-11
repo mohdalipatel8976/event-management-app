@@ -94,11 +94,17 @@ router.get("/current-user", validateToken, async (req, res) => {
 
 router.put("/update-user", validateToken, async (req, res) => {
   try {
-    await User.findByIdAndUpdate(req.body.userId, req.body)
-    return res.status(200).json({ message: "User updated successfully"
-    });
+    const updatedUser = await User.findByIdAndUpdate(
+      req.body.userId,
+      req.body,
+      { new: true } // Ensure the updated user is returned
+    ).select("-password");
+    return res.status(200).json({ message: "User updated successfully", data: updatedUser });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 });
+
+
+
 module.exports = router;

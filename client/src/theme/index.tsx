@@ -15,8 +15,15 @@ function Themeprovider({ children }: {
             },
             Input: {
                 controlHeight: 45,
+                colorBorder: '#ccc',
                 controlOutline : "none",
-            }
+            },
+            Select: {
+                controlHeight: 45,
+                colorBorder: '#ccc',
+                controlOutline : "none",
+            },
+
         }
     }}>{children}</ConfigProvider>;
 }
